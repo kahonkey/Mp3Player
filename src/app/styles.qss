@@ -1,21 +1,57 @@
 *{
-     padding: 0px;
-     margin: 0px;
- }
+    padding: 0px;
+    margin: 0px;
+    background: #536C84; 
+}
 
- #playlistViewer {
- }
+QPushButton#songButton {
+    padding: 0px;
+    border: none;
+    background-color: #3B4D5E;
+    text-align: left;
+}
 
- SongButton {
-     padding: 0px;
-     border: none;
-     background-color: #3B4D5E;
-     text-align: left;
- }
+TitleBar {
+    width: 100%;
+    height: 45px;
+}
 
- #titleBar{
-     width: 100%;
-     height: 150px;
-     background-color: #4A6176;
-     border: none;
- }
+#titleBar * {
+    background: #4A6176;
+    border: none;
+}
+
+#titleAndSongs {
+    width: 50%;
+}
+
+PlaylistViewer {
+    background-color: #3B4D5E;
+}
+
+/* More specific selector for SongController */
+ SongController {
+}
+
+SongController, SongController * {
+    background: #1A232B;
+}
+
+#songName{
+    font-size: 15px;
+}
+
+#albumName{
+    font-size: 9px;
+    color: #94B0CC;
+}
+
+#songControlImage{
+    height: 50px;
+    width: 50px;
+}
+
+
+QLineEdit {
+    border: none;
+}

@@ -1,7 +1,8 @@
 import sys
+from collections.abc import Sequence
 
-from PySide6.QtCore import QSize, Qt, QEvent
-from PySide6.QtGui import QPalette
+from PySide6.QtCore import QSize, Qt
+from PySide6.QtGui import QPalette, QPixmap, QFont
 from PySide6.QtWidgets import (
     QApplication,
     QHBoxLayout,
@@ -13,7 +14,8 @@ from PySide6.QtWidgets import (
     QWidget,
     QPushButton,
     QSplitter,
-    QLineEdit
+    QLineEdit,
+    QFrame
 )
 
 
@@ -21,41 +23,46 @@ songs_list = {
     "Memento - nonoc.mp3": {
         "name": "Memento",
         "artist": "nonoc",
-        "album": "rezero ending",
+        "file_path": "rezero ending",
         "length": "5:04"
     },
     "STYX HELIX - MYTH & ROID.mp3": {
         "name": "STYX HELIX",
         "artist": "MYTH & ROID",
-        "album": "rezero ending",
+        "file_path": "rezero ending",
         "length": "4:50"
     },
     "Last Proof - ZAQ.mp3": {
         "name": "Last Proof",
         "artist": "ZAQ",
-        "album": "ZAQ song",
+        "file_path": "ZAQ song",
         "length": "5:04"
     },
     "UP to ME - BiSH.mp3": {
         "name": "UP to ME",
         "artist": "BiSH",
-        "album": "UP to ME",
+        "file_path": "UP to ME",
         "length": "4:18"
     },
 }
 
-class MainWindow(QWidget):
+
+class MainWindow(QFrame):
     def __init__(self):
         super().__init__()
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(0,0,0,0)
-
-        self.music_controller = QWidget()
-        self.music_controller.setStyleSheet("background-color: #3B4D5E")
-        self.playlist_viewer = PlaylistViewer()
+        self.song_controller = SongController()
+        self.music_controller = QFrame()
+        self.music_controller.layout = QHBoxLayout()
+        self.music_controller.layout.addWidget(self.song_controller)
+        self.music_controller.layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.music_controller.setLayout(self.music_controller.layout)
+        self.playlist_viewer = PlaylistViewer(self.song_controller)
         self.splitter = QSplitter(Qt.Orientation.Horizontal)
         self.splitter.addWidget(self.music_controller)
         self.splitter.addWidget(self.playlist_viewer)
+        self.splitter.setSizes([500,300])
         self.layout.addWidget(self.splitter)
         self.setLayout(self.layout)
         self.load_styles()
@@ -68,12 +75,41 @@ class MainWindow(QWidget):
         except FileNotFoundError:
             print("Stylesheet not found, using default styles")
 
-
-class PlaylistViewer(QWidget):
+class SongController(QFrame):
     def __init__(self):
         super().__init__()
+        self.setFixedSize(340,540)
+        self.setContentsMargins(25,25,25,25)
+        self.setObjectName("songController")
+        self.song_image = QPixmap("placeholder.png").scaledToWidth(290, Qt.TransformationMode.SmoothTransformation)
+        self.image = QLabel()
+        self.image.setPixmap(self.song_image)
+        self.image.setObjectName("songControlImage")
+        self.song_name = QLabel("No song")
+        self.song_name.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.song_name.setMinimumHeight(18)
+        self.song_name.setObjectName("songName")
+        self.album_name = QLabel("No song")
+        self.album_name.setObjectName("albumName")
+        self.album_name.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.album_name.setMinimumHeight(11)
+        self.layout = QVBoxLayout()
+        self.layout.addWidget(self.image)
+        self.layout.addWidget(self.song_name)
+        self.layout.addWidget(self.album_name)
+        self.layout.setSpacing(10)
+        self.layout.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
+        self.setLayout(self.layout)
+        
+    def set_song(self, name, artist, song_path):
+        self.song_name.setText(f"{name} - {artist}")
+        self.album_name.setText(song_path)
+
+class PlaylistViewer(QFrame):
+    def __init__(self, song_controller: SongController):
+        super().__init__()
+        self.song_controller = song_controller
         self.setObjectName("playlistViewer")
-        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
         self.layout = QVBoxLayout()
         title_bar = TitleBar(self.count_songs(songs_list))
         self.layout.addWidget(title_bar)
@@ -86,51 +122,55 @@ class PlaylistViewer(QWidget):
     def set_songs(self, songs: dict, parent):
         for key in songs.keys():
             song = songs[key]
-            song_button = SongButton(song["name"], song["artist"], song["album"], song["length"])
-            song_button.setStyleSheet("width: 100%; height: 45px;")
+            index = list(songs.keys()).index(key)
+            color = "#536C84" if index % 2 == 0 else "#3B4D5E"
+            song_button = SongButton(song["name"], song["artist"], song["file_path"], song["length"])
+            song_button.setStyleSheet(f"width: 100%; height: 45px; background-color: {color};")
+            song_button.clicked.connect(lambda _, b=song_button:
+                                        self.song_controller.set_song(b.name, b.artist, b.file_path)
+                                        )
             parent.addWidget(song_button)
 
     def count_songs(self, songs):
         return len(songs)
 
-class TitleBar(QWidget):
+class TitleBar(QFrame):
     def __init__(self, count):
         super().__init__()
         self.setObjectName("titleBar")
-        title_and_songs = QWidget()
+        title_and_songs = QFrame()
+        title_and_songs.setObjectName("titleAndSongs")
         title_and_songs.layout = QVBoxLayout()
         title_and_songs.playlist_name = QLineEdit()
         title_and_songs.song_count = QLabel(f"{count} songs")
         title_and_songs.layout.addWidget(title_and_songs.playlist_name)
         title_and_songs.layout.addWidget(title_and_songs.song_count)
         title_and_songs.setLayout(title_and_songs.layout)
-        self.setContentsMargins(0,0,0,0)
         self.layout = QHBoxLayout()
+        self.layout.setContentsMargins(0,0,0,0)
         self.layout.addWidget(title_and_songs)
+        self.setFixedHeight(45)
         self.setLayout(self.layout)
 
 class SongButton(QPushButton):
-    def __init__(self, name, artist, album, length):
+    def __init__(self, name, artist, file_path, length):
         super().__init__()
+        self.setObjectName("songButton")
 
         self.layout = QHBoxLayout()
+        
+        self.name = name
+        self.artist = artist
+        self.file_path = file_path
 
         self.name_label = QLabel(name)
         self.artist_label = QLabel(artist)
-        self.album_label = QLabel(album)
+        self.file_path_label = QLabel(file_path)
         self.length_label = QLabel(length)
         self.layout.addWidget(self.name_label)
         self.layout.addWidget(self.artist_label)
-        self.layout.addWidget(self.album_label)
+        self.layout.addWidget(self.file_path_label)
         self.layout.addWidget(self.length_label)
-        self.setStyleSheet(
-            """
-                QPushButton {
-                    padding: 0px;
-                    border: none;
-                    background-color: #3B4D5E;
-                }
-            """)
         self.setLayout(self.layout)
 
 # class CustomTitleBar(QWidget):
