@@ -59,7 +59,7 @@ def init_songs():
     if len(glob.glob("songs/*.mp3")) > len(glob.glob("playlist/*.pkl")):
         for song in glob.glob("songs/*.mp3"):
             audio = MP3(song)
-            new_song = Song(str(audio.get("TIT2")), str(audio.get("TPE1")), song, str(audio.info.length), get_album_cover(audio))
+            new_song = Song(str(audio.get("TIT2")), str(audio.get("TPE1")), song, audio.info.length, get_album_cover(audio))
             songs_list.append(new_song)
         for song in songs_list:
             with open(f"playlist/{song.title}-{song.artist}.pkl", "wb") as f:

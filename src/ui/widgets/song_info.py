@@ -41,8 +41,11 @@ class SongInfo(QFrame):
         self.song_title.setText(f"{title} - {artist}")
         self.album_name.setText(song_path)
         self.audio_eng.load(song_path)
-        self.song_image.loadFromData(album_cover)
-        self.song_image.scaledToWidth(290, Qt.TransformationMode.SmoothTransformation)
+        if album_cover is None:
+            self.song_image = QPixmap("placeholder.png").scaledToWidth(290, Qt.TransformationMode.SmoothTransformation)
+        else:
+            self.song_image.loadFromData(album_cover)
+            self.song_image = self.song_image.scaledToWidth(290, Qt.TransformationMode.SmoothTransformation)
         self.image.setPixmap(self.song_image)
         self.audio_eng.play()
         self.is_paused = False

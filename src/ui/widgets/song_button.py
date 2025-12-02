@@ -11,11 +11,14 @@ class SongButton(QPushButton):
         self.artist = artist
         self.file_path = file_path
         self.album_cover = album_cover
-
+        
+        minutes = int(length / 60)
+        seconds = 
+    
         self.name_label = QLabel(name)
         self.artist_label = QLabel(artist)
         self.file_path_label = QLabel(file_path)
-        self.length_label = QLabel(length)
+        self.length_label = QLabel(f"{int(length / 60)}:{int(length % 60)}")
         self.layout.addWidget(self.name_label)
         self.layout.addWidget(self.artist_label)
         self.layout.addWidget(self.file_path_label)
