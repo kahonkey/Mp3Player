@@ -23,10 +23,10 @@ class PlaylistViewer(QFrame):
         for song in songs:
             index = songs.index(song)
             color = "#536C84" if index % 2 == 0 else "#3B4D5E"
-            song_button = SongButton(song.title, song.artist, song.file_path, song.length)
+            song_button = SongButton(song.title, song.artist, song.file_path, song.length, song.album_cover)
             song_button.setStyleSheet(f"width: 100%; height: 45px; background-color: {color};")
             song_button.clicked.connect(lambda _, b=song_button:
-                                        self.song_controller.set_song(b.title, b.artist, b.file_path)
+                                        self.song_controller.set_song(b.title, b.artist, b.file_path, b.album_cover)
                                         )
             parent.addWidget(song_button)
 

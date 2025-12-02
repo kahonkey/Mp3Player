@@ -30,10 +30,10 @@ PlaylistViewer {
 }
 
 /* More specific selector for SongController */
- SongController {
+ SongInfo {
 }
 
-SongController, SongController * {
+SongInfo, SongInfo * {
     background: #1A232B;
 }
 
@@ -46,7 +46,7 @@ SongController, SongController * {
     color: #94B0CC;
 }
 
-#songControlImage{
+#songInfoImage{
     height: 50px;
     width: 50px;
 }
@@ -54,4 +54,9 @@ SongController, SongController * {
 
 QLineEdit {
     border: none;
+}
+
+#controllerButton{
+    border: none;
+
 }

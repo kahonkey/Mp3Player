@@ -15,7 +15,7 @@ from PySide6.QtWidgets import (
     QFrame
 )
 
-from src.ui.widgets.song_controller import SongController
+from src.ui.widgets.song_info import SongInfo
 from src.ui.widgets.playlist_viewer import PlaylistViewer
 
 audio_eng = AudioEngine()
@@ -31,7 +31,7 @@ class MainWindow(QFrame):
         super().__init__()
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(0,0,0,0)
-        self.song_controller = SongController()
+        self.song_controller = SongInfo()
         self.music_controller = QFrame()
         self.music_controller.layout = QHBoxLayout()
         self.music_controller.layout.addWidget(self.song_controller)
@@ -59,7 +59,7 @@ def init_songs():
     if len(glob.glob("songs/*.mp3")) > len(glob.glob("playlist/*.pkl")):
         for song in glob.glob("songs/*.mp3"):
             audio = MP3(song)
-            new_song = Song(str(audio.get("TIT2")), str(audio.get("TPE1")), song, str(audio.info.length))
+            new_song = Song(str(audio.get("TIT2")), str(audio.get("TPE1")), song, str(audio.info.length), get_album_cover(audio))
             songs_list.append(new_song)
         for song in songs_list:
             with open(f"playlist/{song.title}-{song.artist}.pkl", "wb") as f:
@@ -70,6 +70,16 @@ def init_songs():
         with open(song, "rb") as f:
             unpickled_song = pickle.load(f)
         songs_list.append(unpickled_song)
+        
+def get_album_cover(audio):
+    # Check for APIC frame (album art)
+    if 'APIC:' in audio.tags:
+        artwork = audio.tags['APIC:'].data
+        print(artwork)
+        return artwork
+    else:
+        print("asdwad")
+        return None
 
 if __name__ == "__main__":
     init_songs()

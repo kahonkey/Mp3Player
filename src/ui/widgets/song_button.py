@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QPushButton, QHBoxLayout, QLabel
 
 class SongButton(QPushButton):
-    def __init__(self, name, artist, file_path, length):
+    def __init__(self, name, artist, file_path, length, album_cover):
         super().__init__()
         self.setObjectName("songButton")
 
@@ -10,6 +10,7 @@ class SongButton(QPushButton):
         self.title = name
         self.artist = artist
         self.file_path = file_path
+        self.album_cover = album_cover
 
         self.name_label = QLabel(name)
         self.artist_label = QLabel(artist)
