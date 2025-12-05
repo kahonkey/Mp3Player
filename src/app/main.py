@@ -12,11 +12,13 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QVBoxLayout,
     QSplitter,
-    QFrame
+    QFrame,
+    QPushButton
 )
 
 from src.ui.widgets.song_info import SongInfo
 from src.ui.widgets.playlist_viewer import PlaylistViewer
+from src.ui.dialogs.file_dialog import FileDialog
 
 audio_eng = AudioEngine()
 
@@ -31,6 +33,11 @@ class MainWindow(QFrame):
         super().__init__()
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(0,0,0,0)
+
+        self.test_button = QPushButton("TEST: Open MP3 Files")
+        self.test_button.clicked.connect(self.open_file_dialog_test)
+        self.layout.addWidget(self.test_button)
+
         self.song_controller = SongInfo()
         self.music_controller = QFrame()
         self.music_controller.layout = QHBoxLayout()
@@ -45,6 +52,17 @@ class MainWindow(QFrame):
         self.layout.addWidget(self.splitter)
         self.setLayout(self.layout)
         self.load_styles()
+
+    def open_file_dialog_test(self):
+        files = FileDialog.open_mp3_files(self)
+
+        if not files:
+            print("No MP3 files selected.")
+            return
+
+        print("Selected MP3 files:")
+        for f in files:
+            print("  ", f)
 
     def load_styles(self):
         try:
