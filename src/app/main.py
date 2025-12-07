@@ -18,7 +18,6 @@ from PySide6.QtWidgets import (
 from src.ui.widgets.song_info import SongInfo
 from src.ui.widgets.playlist_viewer import PlaylistViewer
 
-audio_eng = AudioEngine()
 
 songs_list = []
 
@@ -29,9 +28,11 @@ if not glob.glob("playlist"):
 class MainWindow(QFrame):
     def __init__(self):
         super().__init__()
+        self.audio_eng = AudioEngine()
+        self.audio_eng.set_volume(.5)
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(0,0,0,0)
-        self.song_controller = SongInfo()
+        self.song_controller = SongInfo(self.audio_eng)
         self.music_controller = QFrame()
         self.music_controller.layout = QHBoxLayout()
         self.music_controller.layout.addWidget(self.song_controller)

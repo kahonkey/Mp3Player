@@ -60,3 +60,26 @@ QLineEdit {
     border: none;
 
 }
+
+QSlider::handle:horizontal{
+    background: transparent;
+    border: 0px solid transparent;
+    width: 0px;
+    height: 0px;
+}
+
+QSlider::groove:horizontal{
+    background-color: #D9D9D9;
+    border: 0px solid transparent;
+    height: 2px;
+}
+
+QSlider::sub-page:horizontal{
+    background-color: #536C84;
+    border: 0px solid transparent;
+    height: 2px;
+}
+
+#volumeSlider{
+    max-width: 100px;
+}
