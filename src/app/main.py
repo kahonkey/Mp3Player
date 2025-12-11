@@ -31,7 +31,7 @@ class MainWindow(QFrame):
         super().__init__()
         self.layout = QVBoxLayout()
         self.layout.setContentsMargins(0,0,0,0)
-        self.song_controller = SongInfo()
+        self.song_controller = SongInfo(songs_list)
         self.music_controller = QFrame()
         self.music_controller.layout = QHBoxLayout()
         self.music_controller.layout.addWidget(self.song_controller)

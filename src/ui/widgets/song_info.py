@@ -6,8 +6,10 @@ from src.engine.audio_engine import AudioEngine
 
 
 class SongInfo(QFrame):
-    def __init__(self):
+    def __init__(self, songs_list):
         super().__init__()
+        self.songs_list = songs_list
+        self.current_index = 0
         self.audio_eng = AudioEngine()
         self.is_paused = True
         self.setFixedSize(339, 540)
@@ -28,6 +30,8 @@ class SongInfo(QFrame):
         self.song_controller = SongController()
         self.song_controller.pause.set_pause_icon(self.is_paused)
         self.song_controller.pause.clicked.connect(self.pause_unpause)
+        self.song_controller.forward.clicked.connect(self.play_next)
+        self.song_controller.backward.clicked.connect(self.play_previous)
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.image)
         self.layout.addWidget(self.song_title)
@@ -60,3 +64,21 @@ class SongInfo(QFrame):
             self.audio_eng.pause()
             self.is_paused = True
             self.song_controller.pause.set_pause_icon(self.is_paused)
+
+    def play_next(self):
+        if not self.songs_list:
+            return
+
+        self.current_index = (self.current_index + 1) % len(self.songs_list)
+        song = self.songs_list[self.current_index]
+        self.set_song(song.title, song.artist, song.file_path, song.album_cover)
+
+
+    def play_previous(self):
+        if not self.songs_list:
+            return
+
+        self.current_index = (self.current_index - 1) % len(self.songs_list)
+        song = self.songs_list[self.current_index]
+        self.set_song(song.title, song.artist, song.file_path, song.album_cover)
+
