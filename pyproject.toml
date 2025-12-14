@@ -1,0 +1,26 @@
+[tool.pyside6-deploy]
+project = "src/app/main.py"
+input = "src/app/main.py"
+name = "MP3Player"
+qml_modules = false
+
+# Folders to include
+packages = [
+    "src/app",
+    "src/core",
+    "src/data",
+    "src/engine",
+    "src/ui"
+]
+
+resources = [
+    "src/app/placeholder.png",
+    "src/app/styles.qss",
+    "src/ui/icons"
+]
+
+include_plugins = ["platforms", "imageformats"]
+
+# Optional: reduce size
+compress = true
+optimize = true
