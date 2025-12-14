@@ -11,6 +11,7 @@ class SongButton(QPushButton):
         self.artist = artist
         self.file_path = file_path
         self.album_cover = album_cover
+        self.length = int(length)
         
         minutes = str(int(length / 60))
         seconds = str(int(length % 60))

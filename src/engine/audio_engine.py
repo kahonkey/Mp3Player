@@ -9,6 +9,7 @@ class AudioEngine:
         mixer.init()
         self.current_file = None
         self.is_paused = False
+        self.current_pos: float = 0
 
     def load(self, file_path: str):
         file_path = Path(file_path)
@@ -26,7 +27,8 @@ class AudioEngine:
         if not self.current_file:
             raise RuntimeError("No audio file loaded")
 
-        mixer.music.play()
+        mixer.music.play(0, 0)
+        self.current_pos = 0
         self.is_paused = False
 
     def stop(self):
@@ -52,3 +54,10 @@ class AudioEngine:
 
     def is_playing(self) -> bool:
         return mixer.music.get_busy()
+
+    def get_position(self):
+        return self.current_pos + mixer.music.get_pos()/1000
+
+    def set_position(self, pos):
+        mixer.music.play(0, pos)
+        self.current_pos = pos
